@@ -1,17 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   printf_alex_ok.c                                   :+:      :+:    :+:   */
+/*   printf_3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amanjon- <amanjon-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/08 12:23:43 by amanjon-          #+#    #+#             */
-/*   Updated: 2023/09/12 12:56:19 by amanjon-         ###   ########.fr       */
+/*   Created: 2023/09/13 12:14:52 by amanjon-          #+#    #+#             */
+/*   Updated: 2023/09/13 15:58:57 by amanjon-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdarg.h>
+// funcion print_hex de Amir ok. dos ultimas funciones valen las de mi printf -ok-
 
 static int ft_putchar(int c)
 {
@@ -47,11 +48,11 @@ static int ft_count_digits(int nbr)
     if (nbr == 0)
         return (1);
     if (nbr < 0)
-        nbr = nbr * -1;
+        nbr *= -1;
     while (nbr > 0)
     {
-        nbr = nbr / 10;
-        count++;
+        nbr /= 10;
+        count ++;
     }
     return (count);
 }
@@ -86,23 +87,27 @@ static int  ft_putnbr(int nbr)
 static int ft_print_hex(unsigned int nbr)
 {
     int count;
+    int pos;
+    char    hexa[12];
 
     count = 0;
-
-    if (nbr >= 16)
+    pos = 0;
+    if (nbr == 0)
     {
-        count += print_hex(nbr / 16);
-        count += print_hex(nbr % 16);
+        ft_putchar('0');
+        return (1);
     }
-    if (nbr <= 9)
+    while  (nbr > 0)
     {
-        count = nbr + '0';
-        write(1, &count, 1);
+        hexa[count] = "0123456789abcdef"[nbr % 16];
+        nbr /= 16;
+        count++;
     }
-    else if (nbr < 16)
+    pos = count - 1;
+    while (pos >= 0)
     {
-        count = nbr + 'W';
-        write(1, &count, 1);
+        ft_putchar(hexa[pos]);
+        pos--;
     }
     return (count);
 }
@@ -116,9 +121,9 @@ static int ft_print_format(char *fmt, int j, va_list args)
 	x = 0;
 	if (fmt[i] == 's')
 		x = ft_putstr(va_arg(args, char *));
-	else if (fmt == 'd')
+	else if (fmt[i] == 'd')
 		x = ft_putnbr(va_arg(args, int));
-	else if (fmt[i] == 'x' || fmt[i] == 'X')
+	else if (fmt[i] == 'x')
 		x = ft_print_hex(va_arg(args, unsigned int));
 	x = x + j;
 	return (x);
@@ -128,19 +133,21 @@ int ft_printf(const char *fmt, ... )
 {
 	int		i;
 	int		j;
+	char	*str;
 	va_list	args;
 
 	i = 0;
 	j = 0;
+	str = (char *) fmt;
 	va_start(args, fmt);
-	while (fmt[i])
+	while (str[i])
 	{
-		if (fmt[i] != '%')
-			j = j + ft_putchar(fmt[i]);
-		else if (fmt[i] == '%')
+		if (str[i] != '%')
+			j = j + ft_putchar(str[i]);
+		else if (str[i] == '%')
 		{
 			i++;
-			j = ft_print_format(args, j, &fmt[i]);
+			j = ft_print_format( &str[i], j, args);
 		}
 		i++;
 	}
