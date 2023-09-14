@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   printf_3.c                                         :+:      :+:    :+:   */
+/*   printf.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: amanjon- <amanjon-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/13 12:14:52 by amanjon-          #+#    #+#             */
-/*   Updated: 2023/09/13 15:58:57 by amanjon-         ###   ########.fr       */
+/*   Updated: 2023/09/14 11:00:13 by amanjon-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,12 @@ static int  ft_putnbr(int nbr)
 {
     int count;
 
+    count = 0;
 	if (nbr == -2147483648)
 	{
 		write(1, "-2147483648", 11);
 		return (11);
 	}
-    count = 0;
 	if (nbr < 0)
 	{
 		ft_putchar('-');
@@ -79,15 +79,15 @@ static int  ft_putnbr(int nbr)
 		ft_putnbr(nbr / 10);
 		ft_putnbr(nbr % 10);
 	}
-	else if (nbr <= 9)
+	if (nbr <= 9)
 		ft_putchar(nbr + '0');
     return (count);
 }
 
 static int ft_print_hex(unsigned int nbr)
 {
-    int count;
-    int pos;
+    int     count;
+    int     pos;
     char    hexa[12];
 
     count = 0;
@@ -147,7 +147,7 @@ int ft_printf(const char *fmt, ... )
 		else if (str[i] == '%')
 		{
 			i++;
-			j = ft_print_format( &str[i], j, args);
+			j = ft_print_format(&str[i], j, args);
 		}
 		i++;
 	}
