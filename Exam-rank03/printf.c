@@ -6,13 +6,12 @@
 /*   By: amanjon- <amanjon-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/13 12:14:52 by amanjon-          #+#    #+#             */
-/*   Updated: 2023/09/14 11:00:13 by amanjon-         ###   ########.fr       */
+/*   Updated: 2023/09/18 09:30:07 by amanjon-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdarg.h>
-// funcion print_hex de Amir ok. dos ultimas funciones valen las de mi printf -ok-
 
 static int ft_putchar(int c)
 {
@@ -43,15 +42,13 @@ static int ft_count_digits(int nbr)
     int count;
 
     count = 0;
-    if (nbr == -2147483648)
-        return (10);
     if (nbr == 0)
         return (1);
     if (nbr < 0)
         nbr *= -1;
     while (nbr > 0)
     {
-        nbr /= 10;
+        nbr = nbr / 10;
         count ++;
     }
     return (count);
