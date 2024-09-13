@@ -6,12 +6,12 @@
 /*   By: amanjon <amanjon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 11:39:18 by amanjon           #+#    #+#             */
-/*   Updated: 2024/09/12 13:05:25 by amanjon          ###   ########.fr       */
+/*   Updated: 2024/09/13 13:45:53 by amanjon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// 0    False
-
+// 0 				FALSE
+// 1, 2, 3, 4, .... TRUE
 
 #include <string.h>
 #include <unistd.h>
@@ -95,47 +95,48 @@ void ft_print(char *str)
 }
 
 // if
-// if
-int cd(char **argv, int i)
-{
-	if (i != 2)
-		return ft_print("error: cd: bad arguments\n"), 1;
-	if (chdir(argv[1]) == -1)
-		return ft_print("error: cd: cannot change directory to "), ft_print(argv[1]), ft_print("\n"), 1;
-	return (0);
-}
-
-// if
 void set_pipe(int pipes, int *fd, int end)
 {
 	if (pipes && (dup2(fd[end], end) == -1 || close(fd[0]) == -1 || close(fd[1]) == -1))
-		ft_print(("error: fatal\n"), exit(1));
+	{
+		ft_print("error: fatal\n");
+		exit(1);
+	}
+}
+
+// if
+// if
+int ft_cd(char **argv, int i)
+{
+	if (i != 2)
+		return (ft_print("error: cd: bad arguments\n"), 1);
+	if (chdir(argv[1]) == -1)
+		return (ft_print("error: cd: cannot change directory to "), ft_print(argv[1]), ft_print("\n"), 1);
+	return (0);
 }
 
 // if --> 4
-
-int	exec(char **argv, int i, char **env)
+int	ft_exec(char **argv, int i, char **env)
 {
-	int pipes, fd[2], pid, status;
+	int pipes, pid, fd[2], status;
 
-	pipes = argv[i] && !strcmp(argv[i], "|"); 	// argv[i] no es NULL (es decir, argv[i] contiene una cadena válida).
-												// argv[i] es igual a "|" (lo que hace que !strcmp(argv[i], "|") sea verdadero)
+	pipes = argv[i] && !strcmp(argv[i], "|");	// posición i, distinto de null y que sea "|", pipes = 1 (TRUE)
 												
-	if (!pipes && !strcmp(*argv, "cd"))
-		return cd(argv, i);
+	if (!pipes && !strcmp(*argv, "cd"))			// encuentra un cd
+		return (ft_cd(argv, i));
 
-	if (pipes && pipe(fd) == -1)
+	if (pipes && pipe(fd) == -1)				// error al crear el pipe
 		ft_print("error: fatal\n"), exit(1);
 
-	if ((pid = fork()) == -1)
+	if ((pid = fork()) == -1)					// crear proceso hijo
 		ft_print("error: fatal\n"), exit(1);
 	if (!pid)
 	{
 		argv[i] = 0;
 		set_pipe(pipes, fd, 1);
 		if (!strcmp(*argv, "cd"))
-			exit(cd(argv, i));
-		execve(*argv, argv, env);
+			exit(ft_cd(argv, i));
+		execve(*argv, argv, env);				// execve(name ejecutable, argv, env); --> si falla, se ejecuta lo de abajo
 		ft_print("error: cannot execute "), ft_print(*argv), ft_print("\n"), exit(1);
 	}
 	waitpid(pid, &status, 0);
@@ -160,7 +161,7 @@ int main(int, char **argv, char **env)
 		while (argv[i] && strcmp(argv[i], "|") && strcmp(argv[i], ";"))
 			i++;
 		if (i)
-			status = exec(argv, i, env);
+			status = ft_exec(argv, i, env);
 	}
 	return (status);
 }
