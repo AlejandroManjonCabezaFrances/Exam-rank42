@@ -6,14 +6,29 @@
 /*   By: amanjon <amanjon@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 11:39:18 by amanjon           #+#    #+#             */
-/*   Updated: 2024/09/13 13:45:53 by amanjon          ###   ########.fr       */
+/*   Updated: 2024/09/17 03:05:59 by amanjon          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // 0 				FALSE
 // 1, 2, 3, 4, .... TRUE
 
-#include <string.h>
+/* fd[0]: Descriptor del extremo de lectura.
+fd[1]: Descriptor del extremo de escritura. */
+
+/* int main()
+{
+	int i;
+
+	i = 0;
+	if(i)
+		printf("entra en if: condición verdadera");
+	else
+		printf("entra en el else: condición falsa");
+	return (0);
+} */
+
+/* #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -80,13 +95,13 @@ int	main(int argc, char **argv, char **env)
 		argv += count;
 	}
 	return (status);
-}
+} */
 //68 line
 
-#include <string.h>
 #include <unistd.h>
-#include <sys/wait.h>
+#include <string.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 
 void ft_print(char *str)
 {
@@ -122,17 +137,17 @@ int	ft_exec(char **argv, int i, char **env)
 
 	pipes = argv[i] && !strcmp(argv[i], "|");	// posición i, distinto de null y que sea "|", pipes = 1 (TRUE)
 												
+	if (pipes && pipe(fd) == -1)				// se encuentra pipe y error al crear el pipe
+		ft_print("error: fatal\n"), exit(1);
+
 	if (!pipes && !strcmp(*argv, "cd"))			// encuentra un cd
 		return (ft_cd(argv, i));
 
-	if (pipes && pipe(fd) == -1)				// error al crear el pipe
-		ft_print("error: fatal\n"), exit(1);
-
 	if ((pid = fork()) == -1)					// crear proceso hijo
 		ft_print("error: fatal\n"), exit(1);
-	if (!pid)
+	if (!pid)									// pid = 0, proceso ok, para que entre con 0 False --> !
 	{
-		argv[i] = 0;
+		argv[i] = 0;							// Null al final del argumento
 		set_pipe(pipes, fd, 1);
 		if (!strcmp(*argv, "cd"))
 			exit(ft_cd(argv, i));
@@ -141,15 +156,16 @@ int	ft_exec(char **argv, int i, char **env)
 	}
 	waitpid(pid, &status, 0);
 	set_pipe(pipes, fd, 0);
-	return WIFEXITED(status) && WEXITSTATUS(status);
+	return WIFEXITED(status) && WEXITSTATUS(status);	// 1 Verifica si el proceso hijo terminó normalmente. // 2 Obtiene el código de salida del proceso hijo		
 }
 
 // while
 //       while
 //		 if	
-int main(int, char **argv, char **env)
+int main(int argc, char **argv, char **env)
 {
-	int i;
+	(void)argc;
+	int i; 
 	int status;
 	
 	i = 0;
