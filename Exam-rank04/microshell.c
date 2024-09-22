@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   microshell.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amanjon <amanjon@student.42.fr>            +#+  +:+       +#+        */
+/*   By: amanjon- <amanjon-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 11:39:18 by amanjon           #+#    #+#             */
-/*   Updated: 2024/09/17 03:05:59 by amanjon          ###   ########.fr       */
+/*   Updated: 2024/09/21 01:04:27 by amanjon-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,7 @@ int	main(int argc, char **argv, char **env)
 void ft_print(char *str)
 {
 	while (*str)
-		write(2, str++, 1);
+		write(2, str++, 1);  // 2 --> salida de error estandar
 }
 
 // if
@@ -143,7 +143,7 @@ int	ft_exec(char **argv, int i, char **env)
 	if (!pipes && !strcmp(*argv, "cd"))			// encuentra un cd
 		return (ft_cd(argv, i));
 
-	if ((pid = fork()) == -1)					// crear proceso hijo
+	if ((pid = fork()) == -1)			// IMPORTANTE PARENTISIS, SE CHECKEA ./a.out ola--> te sale dos procesos si no pones parentesis
 		ft_print("error: fatal\n"), exit(1);
 	if (!pid)									// pid = 0, proceso ok, para que entre con 0 False --> !
 	{
@@ -156,7 +156,7 @@ int	ft_exec(char **argv, int i, char **env)
 	}
 	waitpid(pid, &status, 0);
 	set_pipe(pipes, fd, 0);
-	return WIFEXITED(status) && WEXITSTATUS(status);	// 1 Verifica si el proceso hijo terminó normalmente. // 2 Obtiene el código de salida del proceso hijo		
+	return (WIFEXITED(status) && WEXITSTATUS(status));	// 1 Verifica si el proceso hijo terminó normalmente. // 2 Obtiene el código de salida del proceso hijo		
 }
 
 // while
